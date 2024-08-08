@@ -18,10 +18,12 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const server_1 = require("@apollo/server");
 const express4_1 = require("@apollo/server/express4");
 const user_1 = require("./user");
+const cors_1 = __importDefault(require("cors"));
 function initServer() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
         app.use(body_parser_1.default.json());
+        app.use((0, cors_1.default)());
         const graphqlServer = new server_1.ApolloServer({
             typeDefs: `
         ${user_1.User.types}
