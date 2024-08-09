@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { prismaClient } from "../clients/db";
 import JWTService from "../services/jwt";
@@ -60,7 +59,7 @@ const queries = {
   
   },
 
-  //This resolver will return user info to frontend.
+  //This resolver will return userInfo from the database which is required in frontend.
   getCurrentUser: async (parent: any, args: any, ctx: GraphqlContext) => {
     // console.log(ctx);
 

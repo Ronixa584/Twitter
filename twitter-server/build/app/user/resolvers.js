@@ -42,7 +42,7 @@ const queries = {
         const userToken = jwt_1.default.generateTokenForUser(userInDB);
         return userToken;
     }),
-    //This resolver will return user info to frontend.
+    //This resolver will return userInfo from the database which is required in frontend.
     getCurrentUser: (parent, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
         // console.log(ctx);
         var _a;
