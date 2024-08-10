@@ -19,6 +19,12 @@ import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 import { useCurrentUser } from "@/hooks/user";
 import Image from 'next/image';
 import { useQueryClient } from "@tanstack/react-query";
+import { GoFileMedia } from "react-icons/go";
+import { FaSquarePollHorizontal } from "react-icons/fa6";
+import { BsEmojiSmile } from "react-icons/bs";
+import { RiCalendarScheduleLine } from "react-icons/ri";
+import { TfiLocationPin } from "react-icons/tfi";
+import { HiMiniGif } from "react-icons/hi2";
 
 interface TwitterSidebarButton {
   title: string;
@@ -100,6 +106,13 @@ export default function Home() {
     window.location.href = '/';
   }
 
+  const handleSelectImage = useCallback(() => {
+    const input = document.createElement("input");
+    input.setAttribute("type","file");
+    input.setAttribute("accept","image/*");
+    input.click();
+  }, []);
+
   return (
     <div className="main flex h-screen w-screen justify-center">
       <Toaster />
@@ -127,7 +140,10 @@ export default function Home() {
           </button>
         </div>
         {user && user.profileImageURL && (
-          <div onClick={logout} className="flex gap-3 mt-20 ml-24 p-2 mr-10 hover:bg-slate-800 rounded-full cursor-pointer">
+          <div
+            onClick={logout}
+            className="flex gap-3 mt-20 ml-24 p-2 mr-10 hover:bg-slate-800 rounded-full cursor-pointer"
+          >
             <div>
               <Image
                 className="rounded-full"
@@ -141,15 +157,72 @@ export default function Home() {
               <h2 className="">
                 {user.firstName} {user.lastName}
               </h2>
-              <h2 className="text-gray-400">
-                @{user.email.split('@')[0]}
-              </h2>
+              <h2 className="text-gray-400">@{user.email.split("@")[0]}</h2>
             </div>
           </div>
         )}
       </div>
       <div className="second  border border-gray-700 w-2/5 h-screen overflow-y-scroll no-scrollbar">
-        <PostTweet />
+        {/* <PostTweet /> */}
+
+        <div className="flex flex-row h-auto  transition-all cursor-pointer border border-b-1 border-t-1 border-r-0 border-l-0 border-gray-700 pb-3">
+          <div className="userImagew-1/6 pl-4">
+            <Image
+              src={user?.profileImageURL}
+              alt="User Image"
+              height={40}
+              width={50}
+              className="rounded-full mt-4 m-auto"
+            />
+          </div>
+          <div className="Message w-full pt-6 pl-2 mr-5">
+            <textarea
+              placeholder="What is happening?!"
+              className="userMessage w-full text-xl text-gray-500 bg-transparent mr-5"
+              style={{
+                overflowY: "auto",
+                resize: "none",
+                maxHeight: "calc(100vh - 100px)",
+              }}
+              onInput={(e) => {
+                e.target.style.height = "auto"; // Reset the height
+                e.target.style.height = `${e.target.scrollHeight}px`; // Set height to scrollHeight
+              }}
+            />
+
+            <div className="Icons flex justify-between mt-4">
+              <div className="flex justify-start ">
+                <div
+                  onClick={handleSelectImage}
+                  className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3"
+                >
+                  <GoFileMedia />
+                </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
+                  <HiMiniGif className="" />
+                </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
+                  <FaSquarePollHorizontal />
+                </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
+                  <BsEmojiSmile className="" />
+                </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
+                  <RiCalendarScheduleLine className="" />
+                </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
+                  <TfiLocationPin className="" />
+                </div>
+              </div>
+              <div className="">
+                <button className="tweetButton bg-[#1d9bf0] font-semibold py-2 px-5 rounded-full ">
+                  Tweet
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <FeedCard />
         <FeedCard />
         <FeedCard />

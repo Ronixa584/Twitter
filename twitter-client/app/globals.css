@@ -41,4 +41,8 @@ body {
     }
 }
 
+/* To remove border of textarea when we implement hover on textarea */
+*:focus{
+  outline: none;
+}
 
