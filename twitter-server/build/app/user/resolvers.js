@@ -53,4 +53,10 @@ const queries = {
         return user;
     })
 };
-exports.resolvers = { queries };
+//This resolver is used to get nested object named as Tweet info
+const extraResolvers = {
+    User: {
+        tweets: (parent) => db_1.prismaClient.tweet.findMany({ where: { author: { id: parent.id } } }),
+    },
+};
+exports.resolvers = { queries, extraResolvers };
