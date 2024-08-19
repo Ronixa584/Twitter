@@ -17,21 +17,25 @@ const FeedCard: React.FC<FeedCardProps> = (props) => {
   const { data } = props;
     return (
       <div className="flex flex-row h-auto hover:bg-slate-950  transition-all cursor-pointer border border-b-1 border-t-1 border-r-0 border-l-0 border-gray-700 pb-3">
-        <div className="userImagew-1/6 pl-4">
+        <div className="userImage w-1/6 pl-2 lg:pl-4">
           {data.author?.profileImageURL && (
             <Image
               src={data.author?.profileImageURL}
               alt="User Image"
               height={40}
               width={50}
-              className="rounded-full mt-4 m-auto"
+              className="rounded-full mt-2 lg:mt-4 m-auto"
             />
           )}
         </div>
-        <div className="Message w-full pt-3 pl-2">
-          <div className="UserName font-medium">{data.author?.firstName}</div>
-          <div className="userMessage">{data.content}</div>
-          <div className="Icons flex justify-start gap-24 mt-3">
+        <div className="Message w-full pt-2 lg:pt-3 pl-2">
+          <div className="UserName text-sm md:text-base lg:text-base font-medium">
+            {data.author?.firstName}
+          </div>
+          <div className="userMessage text-sm md:text-base lg:text-base">
+            {data.content}
+          </div>
+          <div className="Icons flex flex-wrap justify-between  mt-3">
             <div className="hover:text-[#1d9bf0] hover:bg-gray-800 rounded-full p-1">
               <BiMessageRounded />
             </div>
