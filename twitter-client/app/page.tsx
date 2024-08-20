@@ -49,7 +49,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    // <div>
       <TwitterLayout>
         <div className="second  border border-gray-700 lg:w-2/5 w-5/6 h-screen overflow-y-scroll no-scrollbar">
           {/* <PostTweet /> */}
@@ -132,10 +132,10 @@ export default function Home() {
           )}
 
           {tweets.map((tweet) =>
-            tweet ? <FeedCard key={tweet.id} data={tweet} /> : null
+            tweet ? <FeedCard key={tweet?.id} data={tweet} /> : null
           )}
         </div>
       </TwitterLayout>
-    </div>
+    // </div>
   );
 }

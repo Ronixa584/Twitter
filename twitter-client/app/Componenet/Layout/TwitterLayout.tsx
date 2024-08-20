@@ -1,3 +1,5 @@
+"use client";
+
 import toast, { Toaster } from "react-hot-toast";
 import { BiEnvelope, BiSolidHomeCircle } from "react-icons/bi";
 import { BsFillPeopleFill, BsTwitter } from "react-icons/bs";
@@ -6,70 +8,84 @@ import { IoPerson, IoSearchSharp } from "react-icons/io5";
 import { LuSquareSlash } from "react-icons/lu";
 import { RiNotification4Line } from "react-icons/ri";
 import Image from "next/image";
-import { useCurrentUser } from "@/hooks/user";
+// import { useCurrentUser } from "@/hooks/user";
+import { useCurrentUser } from "../../../hooks/user";
 import {
   CredentialResponse,
   GoogleLogin,
   GoogleOAuthProvider,
-  useGoogleLogin
+  useGoogleLogin,
 } from "@react-oauth/google";
 import { graphqlClient } from "@/clients/api";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
+import Link from "next/link";
 
 interface TwitterLayoutProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 interface TwitterSidebarButton {
   title: string;
   icon: React.ReactNode;
+  link: string;
 }
 
-const listOfMenu: TwitterSidebarButton[] = [
-  {
-    title: "Home",
-    icon: <BiSolidHomeCircle className="text-3xl" />,
-  },
-  {
-    title: "Explore",
-    icon: <IoSearchSharp className="text-3xl" />,
-  },
-  {
-    title: "Notifications",
-    icon: <RiNotification4Line className="text-3xl" />,
-  },
-  {
-    title: "Messages",
-    icon: <BiEnvelope className="text-3xl" />,
-  },
-  {
-    title: "Grok",
-    icon: <LuSquareSlash className="text-3xl" />,
-  },
-  {
-    title: "Commuities",
-    icon: <BsFillPeopleFill className="text-3xl" />,
-  },
-  {
-    title: "Premium",
-    icon: <BsTwitter className="text-3xl" />,
-  },
-  {
-    title: "Profile",
-    icon: <IoPerson className="text-3xl" />,
-  },
-  {
-    title: "More",
-    icon: <CiCircleMore className="text-3xl" />,
-  },
-];
+const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
+  const { user } = useCurrentUser();
+  const queryClient = useQueryClient();
 
-const TwitterLayout: React.FC<TwitterLayoutProps>=(props)=>{
-    const { user } = useCurrentUser();
-    const queryClient = useQueryClient();
-
+  const listOfMenu: TwitterSidebarButton[] = useMemo(
+    () => [
+      {
+        title: "Home",
+        icon: <BiSolidHomeCircle className="text-3xl" />,
+        link: "/",
+      },
+      {
+        title: "Explore",
+        icon: <IoSearchSharp className="text-3xl" />,
+        link: "/",
+      },
+      {
+        title: "Notifications",
+        icon: <RiNotification4Line className="text-3xl" />,
+        link: "/",
+      },
+      {
+        title: "Messages",
+        icon: <BiEnvelope className="text-3xl" />,
+        link: "/",
+      },
+      {
+        title: "Grok",
+        icon: <LuSquareSlash className="text-3xl" />,
+        link: "/",
+      },
+      {
+        title: "Commuities",
+        icon: <BsFillPeopleFill className="text-3xl" />,
+        link: "/",
+      },
+      {
+        title: "Premium",
+        icon: <BsTwitter className="text-3xl" />,
+        link: "/",
+      },
+      {
+        title: "Profile",
+        icon: <IoPerson className="text-3xl" />,
+        link: "/${user?.id}",
+      },
+      {
+        title: "More",
+        icon: <CiCircleMore className="text-3xl" />,
+        link: "/",
+      },
+    ],
+    [user?.id]
+  );
   //Function to get credential, send it to backend and get JWT token which can be used further.
   const handleLoginWithGoogle = useCallback(
     async (cred: CredentialResponse) => {
@@ -93,8 +109,8 @@ const TwitterLayout: React.FC<TwitterLayoutProps>=(props)=>{
       await queryClient.invalidateQueries(["CURRENT_USER"]);
     },
     [queryClient]
-    );
-    
+  );
+
   const logout = () => {
     window.localStorage.removeItem("TWITTER_TOKEN");
 
@@ -102,9 +118,9 @@ const TwitterLayout: React.FC<TwitterLayoutProps>=(props)=>{
     window.location.href = "/";
   };
 
-    const login = useGoogleLogin({
-      onSuccess: handleLoginWithGoogle,
-});
+  //     const login = useGoogleLogin({
+  //       onSuccess: handleLoginWithGoogle,
+  // });
 
   return (
     <div className="main flex h-screen w-screen lg:justify-center  flex-wrap  ">
@@ -117,15 +133,17 @@ const TwitterLayout: React.FC<TwitterLayoutProps>=(props)=>{
               <BsTwitter className="text-3xl" />
             </div>
             {listOfMenu.map((item) => (
-              <div
-                key={item.title}
-                className="menuElements flex gap-1 lg:gap-5 my-3 lg:my-0 hover:bg-gray-800 rounded-full w-fit cursor-pointer lg:px-5 py-2"
-              >
-                <div className="">{item.icon}</div>
-                <div className="hidden lg:flex lg:justify-center lg:items-center lg:text-xl lg:font-semibold">
-                  {item.title}
+              <Link href={item?.link}>
+                <div
+                  key={item?.title}
+                  className="menuElements flex gap-1 lg:gap-5 my-3 lg:my-0 hover:bg-gray-800 rounded-full w-fit cursor-pointer lg:px-5 py-2"
+                >
+                  <div className="">{item?.icon}</div>
+                  <div className="hidden lg:flex lg:justify-center lg:items-center lg:text-xl lg:font-semibold">
+                    {item.title}
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           <div className="lg:mt-5 lg:mr-7 lg:ml-2 flex justify-center items-center">
@@ -189,6 +207,6 @@ const TwitterLayout: React.FC<TwitterLayoutProps>=(props)=>{
       </div>
     </div>
   );
-}
+};
 
 export default TwitterLayout;

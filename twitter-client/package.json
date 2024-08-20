@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"npm run codegen\" next dev",
+    "devs":"next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
