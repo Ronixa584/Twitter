@@ -25,18 +25,22 @@ interface GoogleTokenInfo {
 } 
 
 const queries = {
-  
-    verifyGoogleToken: async (parent: any, { token }: { token: string }) => {
+  verifyGoogleToken: async (parent: any, { token }: { token: string }) => {
     const googleToken = token;
     const googleOAuthURL = new URL("https://oauth2.googleapis.com/tokeninfo");
     googleOAuthURL.searchParams.set("id_token", googleToken);
 
-    const { data } = await axios.get<GoogleTokenInfo>(googleOAuthURL.toString(), {
-      responseType: "json",
-    });
-  
+    const { data } = await axios.get<GoogleTokenInfo>(
+      googleOAuthURL.toString(),
+      {
+        responseType: "json",
+      }
+    );
+
     // console.log(data);
-    const user = await prismaClient.user.findUnique({ where: { email: data.email } });
+    const user = await prismaClient.user.findUnique({
+      where: { email: data.email },
+    });
 
     if (!user) {
       await prismaClient.user.create({
@@ -48,16 +52,16 @@ const queries = {
         },
       });
     }
-    
-    const userInDB = await prismaClient.user.findUnique({ where: { email: data.email }, });
+
+    const userInDB = await prismaClient.user.findUnique({
+      where: { email: data.email },
+    });
 
     if (!userInDB) return new Error(`User with email not found`);
-      
+
     const userToken = JWTService.generateTokenForUser(userInDB);
 
     return userToken;
-  
-  
   },
 
   //This resolver will return userInfo from the database which is required in frontend.
@@ -71,7 +75,27 @@ const queries = {
     const user = await prismaClient.user.findUnique({ where: { id } });
 
     return user;
-  }
+  },
+
+  //This resolver will return userInfo of requested user ID
+  getUserById: async (parent: any, { id }: { id: string }, ctx: GraphqlContext) => { return prismaClient.user.findUnique({ where: { id } }); },
+
+  //or
+
+  // //This resolver will return userInfo of requested user ID
+  // getUserById: async (
+  //   parent: any,
+  //   args: any,
+  //   ctx: GraphqlContext
+  // ) => {
+  //   console.log(ctx);
+
+  //   const id = ctx.user?.id;
+
+  //   if (!id) return null;
+    
+  //   return await prismaClient.user.findUnique({ where: { id } });
+  // },
 };
 
 //This resolver is used to get nested object named as Tweet info

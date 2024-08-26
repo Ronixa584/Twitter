@@ -25,7 +25,9 @@ const queries = {
             responseType: "json",
         });
         // console.log(data);
-        const user = yield db_1.prismaClient.user.findUnique({ where: { email: data.email } });
+        const user = yield db_1.prismaClient.user.findUnique({
+            where: { email: data.email },
+        });
         if (!user) {
             yield db_1.prismaClient.user.create({
                 data: {
@@ -36,7 +38,9 @@ const queries = {
                 },
             });
         }
-        const userInDB = yield db_1.prismaClient.user.findUnique({ where: { email: data.email }, });
+        const userInDB = yield db_1.prismaClient.user.findUnique({
+            where: { email: data.email },
+        });
         if (!userInDB)
             return new Error(`User with email not found`);
         const userToken = jwt_1.default.generateTokenForUser(userInDB);
@@ -51,7 +55,21 @@ const queries = {
             return null;
         const user = yield db_1.prismaClient.user.findUnique({ where: { id } });
         return user;
-    })
+    }),
+    //This resolver will return userInfo of requested user ID
+    getUserById: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { id }, ctx) { return db_1.prismaClient.user.findUnique({ where: { id } }); }),
+    //or
+    // //This resolver will return userInfo of requested user ID
+    // getUserById: async (
+    //   parent: any,
+    //   args: any,
+    //   ctx: GraphqlContext
+    // ) => {
+    //   console.log(ctx);
+    //   const id = ctx.user?.id;
+    //   if (!id) return null;
+    //   return await prismaClient.user.findUnique({ where: { id } });
+    // },
 };
 //This resolver is used to get nested object named as Tweet info
 const extraResolvers = {
