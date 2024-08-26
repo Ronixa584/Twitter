@@ -1,3 +1,5 @@
+"use client";
+
 import { graphql } from "../../gql";
 
 export const verifyUserGoogleTokenQuery = graphql(`
@@ -19,6 +21,30 @@ export const getCurrentUserQuery = graphql(`
       tweets {
         id
         content
+        author {
+          id
+          firstName
+          lastName
+          profileImageURL
+        }
+      }
+    }
+  }
+`);
+  
+export const getUserByIdQuery = graphql(`
+  #graphql
+  query GetUserById($id: ID!) {  
+    getUserById(id: $id) {        
+      id
+      firstName
+      lastName
+      email
+      profileImageURL
+      tweets {
+        id
+        content
+        imageURL
         author {
           id
           firstName

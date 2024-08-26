@@ -13,6 +13,7 @@ import { HiMiniGif } from "react-icons/hi2";
 import { useCreateTweet, useGetAllTweets } from "./../hooks/tweet";
 import EmojiPicker from "emoji-picker-react";
 import TwitterLayout from "./Componenet/Layout/TwitterLayout";
+import { Tweet } from "@/gql/graphql";
 
 
 export default function Home() {
@@ -131,8 +132,8 @@ export default function Home() {
             </div>
           )}
 
-          {tweets.map((tweet) =>
-            tweet ? <FeedCard key={tweet?.id} data={tweet} /> : null
+          {tweets?.map((tweet) =>
+            tweet ? <FeedCard key={tweet?.id} data={tweet as Tweet} /> : null
           )}
         </div>
       </TwitterLayout>

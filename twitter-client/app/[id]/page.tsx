@@ -1,36 +1,78 @@
 "use client";
 
-import type { NextPage } from "next";
+// import { graphqlClient } from "@/clients/api";
+// import { getUserByIdQuery } from "@/graphql/query/user";
+// import { notFound } from "next/navigation";
+
+// // This is the server component part
+// export default async function UserPage({ params }: { params: { id: string } }) {
+//   const id = params.id;
+
+//   if (!id) {
+//     return notFound();
+//   }
+
+//   const userInfo = await graphqlClient.request(getUserByIdQuery, { id });
+
+//   if (!userInfo?.getUserById) {
+//     return notFound();
+//   }
+
+//   return (
+//     <div>
+//       {/* Pass the fetched user data to the Profile component */}
+//       <UserProfilePage user={userInfo.getUserById as User} />
+//     </div>
+//   );
+// }
+
+
 import { useRouter } from "next/navigation";
 import TwitterLayout from "../Componenet/Layout/TwitterLayout";
 import { IoArrowBackSharp } from "react-icons/io5";
-import { useCurrentUser } from "../../hooks/user";
+import { useCurrentUser,useGetUserInfo } from "../../hooks/user";
+import { useGetAllTweets } from "../../hooks/tweet";
 import Image from "next/image";
 import FeedCard from "../Componenet/FeedCard";
-import { Tweet } from "@/gql/graphql";
+import { Tweet, User } from "@/gql/graphql";
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 
-const UserProfilePage = () => {
-  const router = useRouter();
-  // const { id } = router.query;
-  console.log(router.query);
+
+interface ServerProps {
+  user?: User;
+}
+
+const UserProfilePage: React.FC<ServerProps> = (props) => {
+      const params = useParams();
+    const id = params?.id as string;
+
 
   const { user } = useCurrentUser();
+  
+  const { userProfileInfo } = useGetUserInfo(id);
+
+  // console.log("USER Profile "+ userProfileInfo);
+  // console.log("USER Profile " + JSON.stringify(userProfileInfo, null, 2));
+
 
   return (
     <TwitterLayout>
       <div className="second  border border-gray-700 lg:w-2/5 w-5/6 h-screen overflow-y-scroll no-scrollbar">
         <div className="navigationBar flex border border-gray-700">
+          <Link href="/">
           <div className="nav p-4">
             <IoArrowBackSharp className="text-xl" />
-          </div>
+            </div>
+            </Link>
           <div className="w-11/12 pl-3">
-            {user && (
+            {userProfileInfo && (
               <>
                 <h1 className="text-xl font-bold">
-                  {user?.firstName} {user?.lastName}
+                  {userProfileInfo?.firstName} {userProfileInfo?.lastName}
                 </h1>
                 <div className="text-md text-gray-400">
-                  {user?.tweets?.length} tweets
+                  {userProfileInfo?.tweets?.length} tweets
                 </div>
               </>
             )}
@@ -38,12 +80,12 @@ const UserProfilePage = () => {
         </div>
 
         <div className="bg-indigo-500 bg-gradient-to-r from-sky-500 to-indigo-500 h-1/4  border border-gray-700 relative ">
-          {user && user.profileImageURL && (
+          {userProfileInfo && userProfileInfo.profileImageURL && (
             <div className="mt-28  pl-5 absolute">
               <div>
                 <Image
                   className="rounded-full cursor-pointer "
-                  src={user?.profileImageURL}
+                  src={userProfileInfo?.profileImageURL}
                   height={130}
                   width={140}
                   alt="USER_IMAGE"
@@ -51,16 +93,16 @@ const UserProfilePage = () => {
               </div>
               <div className="pt-5">
                 <h2 className="text-xl font-bold">
-                  {user.firstName} {user.lastName}
+                  {userProfileInfo.firstName} {userProfileInfo.lastName}
                 </h2>
-                <h2 className="text-gray-400">@{user.email.split("@")[0]}</h2>
+                <h2 className="text-gray-400">@{userProfileInfo.email.split("@")[0]}</h2>
               </div>
             </div>
           )}
         </div>
 
         <div className="tweets mt-40">
-          {user?.tweets?.map((tweet) => (
+          {userProfileInfo?.tweets?.map((tweet) => (
             <FeedCard data={tweet as Tweet} key={tweet?.id} />
           ))}
         </div>
@@ -70,3 +112,36 @@ const UserProfilePage = () => {
 };
 
 export default UserProfilePage;
+
+// export const getServerSideProps: GetServerSideProps<ServerProps> = async (context) => {
+//   const id = context.query.id as string | undefined;
+
+//   if (!id) return { notFound: true, props: {user: undefined} };
+
+//   const userInfo = await graphqlClient.request(getUserByIdQuery, { id });
+
+//   if (!userInfo?.getUserById) return { notFound: true };
+
+//   return {
+//     props: {
+//       userInfo: userInfo.getUserById as User,
+//     },
+//   };
+// };
+
+// export default async function UserPage({ params }: Props) {
+//   const id = params.id;
+
+//   if (!id) {
+//     return notFound();
+//   }
+
+//   const userInfo = await graphqlClient.request(getUserByIdQuery, { id });
+
+//   if (!userInfo?.getUserById) {
+//     return notFound();
+//   }
+
+//   return userInfo;
+
+// }

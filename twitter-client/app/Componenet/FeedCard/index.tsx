@@ -7,6 +7,7 @@ import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { LuUpload } from "react-icons/lu";
 import { Tweet } from '@/gql/graphql';
+import Link from "next/link";
 
 interface FeedCardProps {
   data: Tweet
@@ -15,6 +16,8 @@ interface FeedCardProps {
 const FeedCard: React.FC<FeedCardProps> = (props) => {
 
   const { data } = props;
+// console.log(data);
+
     return (
       <div className="flex flex-row h-auto hover:bg-slate-950  transition-all cursor-pointer border border-b-1 border-t-1 border-r-0 border-l-0 border-gray-700 pb-3">
         <div className="userImage w-1/6 pl-2 lg:pl-4">
@@ -29,9 +32,11 @@ const FeedCard: React.FC<FeedCardProps> = (props) => {
           )}
         </div>
         <div className="Message w-full pt-2 lg:pt-3 pl-2">
+          <Link href={`/${data.author?.id}`}>
           <div className="UserName text-sm md:text-base lg:text-base font-medium">
             {data.author?.firstName}
           </div>
+          </Link>
           <div className="userMessage text-sm md:text-base lg:text-base">
             {data.content}
           </div>

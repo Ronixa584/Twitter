@@ -36,6 +36,8 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
 
+  // console.log(user);
+
   const listOfMenu: TwitterSidebarButton[] = useMemo(
     () => [
       {
@@ -76,7 +78,7 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
       {
         title: "Profile",
         icon: <IoPerson className="text-3xl" />,
-        link: "/${user?.id}",
+        link: `/${user?.id}`,
       },
       {
         title: "More",
