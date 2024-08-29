@@ -11,8 +11,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolvers = void 0;
 const db_1 = require("../clients/db");
+const serviceAccount = require("../../../twitter-cb8e7-firebase-adminsdk-smhkw-1a6c1bd2b4.json");
+const firebaseAdmin = require("firebase-admin");
+const { v4: uuidv4 } = require("uuid");
+const admin = firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(serviceAccount),
+    storageBucket: "twitter-cb8e7.appspot.com",
+});
+const storageRef = admin.storage().bucket(`gs://twitter-cb8e7.appspot.com`);
 const queries = {
     getAllTweets: () => db_1.prismaClient.tweet.findMany({ orderBy: { createdAt: "desc" } }),
+    getSignedURLForTweet: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { imageType, imageName }, ctx) {
+        if (!ctx.user || !ctx.user.id)
+            throw new Error("Unauthenticated");
+        const allowedImageTypes = [
+            "image/jpg",
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+        ];
+        // Upload the File
+        const file = storageRef.file(`uploads/twitter/${imageName}-${Date.now()}.${imageType}`);
+        const [url] = yield file.getSignedUrl({
+            action: "write",
+            method: 'PUT',
+            expires: Date.now() + 60 * 60 * 1000, // 1 hour expiration
+            contentType: `image/${imageType}`,
+        });
+        return url;
+    }),
 };
 const mutations = {
     createTweet: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { payload }, ctx) {

@@ -13,6 +13,7 @@
   "description": "",
   "devDependencies": {
     "@types/cors": "^2.8.17",
+    "@types/uuid": "^10.0.0",
     "prisma": "^5.18.0",
     "tsc-watch": "^6.2.0",
     "typescript": "^5.5.4"
@@ -25,7 +26,9 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "firebase-admin": "^12.4.0",
     "graphql": "^16.9.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^10.0.0"
   }
 }
