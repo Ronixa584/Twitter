@@ -40,6 +40,7 @@ const FeedCard: React.FC<FeedCardProps> = (props) => {
           <div className="userMessage text-sm md:text-base lg:text-base">
             {data.content}
           </div>
+          {data.imageURL && <Image src={data.imageURL} alt="image" width={400} height={300}/>}
           <div className="Icons flex flex-wrap justify-between  mt-3">
             <div className="hover:text-[#1d9bf0] hover:bg-gray-800 rounded-full p-1">
               <BiMessageRounded />

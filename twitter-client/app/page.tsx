@@ -14,6 +14,10 @@ import { useCreateTweet, useGetAllTweets } from "./../hooks/tweet";
 import EmojiPicker from "emoji-picker-react";
 import TwitterLayout from "./Componenet/Layout/TwitterLayout";
 import { Tweet } from "@/gql/graphql";
+import { graphqlClient } from "@/clients/api";
+import { getSignedURLForTweetQuery } from "@/graphql/query/tweet";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 
 export default function Home() {
@@ -26,22 +30,75 @@ export default function Home() {
   
 
   const [content, setContent] = useState("");
+  const [imageURL, setImageURL] = useState("");
 
   const { mutate } = useCreateTweet();
 
+  const handleInputChangeFile = useCallback((input: HTMLInputElement) => {
+    return async (event: Event) => {
+      event.preventDefault();
+
+      const file: File | null | undefined = input.files?.item(0);
+
+      if (!file) return;
+
+      const fileType = file?.type.split("/")[1]; // This will extract 'jpg'
+
+      const { getSignedURLForTweet } = await graphqlClient.request(
+        getSignedURLForTweetQuery,
+        {
+          imageName: file?.name,
+          imageType: fileType,
+        }
+      );
+
+      // console.log(input.files);
+      // console.log(file);
+      console.log("Signed URL:", getSignedURLForTweet);
+
+      if (getSignedURLForTweet) {
+        toast.loading("Uploading...", { id: "2" });
+
+        try {
+          await axios.put(getSignedURLForTweet, file, {
+            headers: {
+              "Content-Type": file?.type,
+            },
+          });
+        } catch (error) {
+          console.log(error.response?.data);
+        }
+
+        toast.success("Upload Completed", { id: "2" });
+        const url = new URL(getSignedURLForTweet);
+        const myFilePath = `${url.origin}${url.pathname}`;
+
+        console.log("Image URL :"+myFilePath);
+
+        setImageURL(myFilePath);
+      }
+    };
+  }, []);
 
   const handleSelectImage = useCallback(() => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
+
+    const handlerFn = handleInputChangeFile(input);
+
+    input.addEventListener("change", handlerFn);
+
     input.click();
-  }, []);
+  }, [handleInputChangeFile]);
+
 
   const handleCreateTweet = useCallback(() => {
     mutate({
       content,
+      imageURL,
     });
-  }, [content, mutate]);
+  }, [content, mutate,imageURL]);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const onEmojiClick = (emojiObject: { emoji: string }) => {
@@ -81,6 +138,9 @@ export default function Home() {
                   e.target.style.height = `${e.target.scrollHeight}px`; // Set height to scrollHeight
                 }}
               />
+            {
+              imageURL && <Image src={imageURL} alt="tweet-image" width={300} height={300} />
+            }
 
               <div className="Icons flex justify-between mt-2  lg:mt-4">
                 <div className="flex justify-start ">
