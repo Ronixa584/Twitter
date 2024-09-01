@@ -9,11 +9,15 @@
 
 This project was built using these technologies.
 
-- React.js
-- Node.js
-- Express.js
-- CSS3
-- VsCode
+- TypeScript
+- NextJS
+- ExpressJS
+- TailwindCSS
+- PrismaORM
+- GraphQL
+- GCP Storage
+- ReactQuery
+- Supabase
 
 ### Show your support
 
