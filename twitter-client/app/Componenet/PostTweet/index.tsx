@@ -7,7 +7,6 @@ import { RiCalendarScheduleLine } from "react-icons/ri";
 import { TfiLocationPin } from "react-icons/tfi";
 import { HiMiniGif } from "react-icons/hi2";
 
-
 const PostTweet: React.FC = () => {
   return (
     <div className="flex flex-row h-auto  transition-all cursor-pointer border border-b-1 border-t-1 border-r-0 border-l-0 border-gray-700 pb-3">

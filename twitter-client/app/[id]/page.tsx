@@ -1,60 +1,26 @@
 "use client";
 
-// import { graphqlClient } from "@/clients/api";
-// import { getUserByIdQuery } from "@/graphql/query/user";
-// import { notFound } from "next/navigation";
-
-// // This is the server component part
-// export default async function UserPage({ params }: { params: { id: string } }) {
-//   const id = params.id;
-
-//   if (!id) {
-//     return notFound();
-//   }
-
-//   const userInfo = await graphqlClient.request(getUserByIdQuery, { id });
-
-//   if (!userInfo?.getUserById) {
-//     return notFound();
-//   }
-
-//   return (
-//     <div>
-//       {/* Pass the fetched user data to the Profile component */}
-//       <UserProfilePage user={userInfo.getUserById as User} />
-//     </div>
-//   );
-// }
-
-
-import { useRouter } from "next/navigation";
 import TwitterLayout from "../Componenet/Layout/TwitterLayout";
 import { IoArrowBackSharp } from "react-icons/io5";
-import { useCurrentUser,useGetUserInfo } from "../../hooks/user";
-import { useGetAllTweets } from "../../hooks/tweet";
+import { useGetUserInfo } from "../../hooks/user";
 import Image from "next/image";
 import FeedCard from "../Componenet/FeedCard";
 import { Tweet, User } from "@/gql/graphql";
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
-
 interface ServerProps {
   user?: User;
 }
 
 const UserProfilePage: React.FC<ServerProps> = (props) => {
-      const params = useParams();
-    const id = params?.id as string;
-
-
-  const { user } = useCurrentUser();
+  const params = useParams();
+  const id = params?.id as string;
   
   const { userProfileInfo } = useGetUserInfo(id);
 
   // console.log("USER Profile "+ userProfileInfo);
   // console.log("USER Profile " + JSON.stringify(userProfileInfo, null, 2));
-
 
   return (
     <TwitterLayout>

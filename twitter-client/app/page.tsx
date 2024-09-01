@@ -21,17 +21,11 @@ import axios from "axios";
 
 
 export default function Home() {
-  const { user } = useCurrentUser();
-
-  // console.log(user);
-
-  const { tweets = [] } = useGetAllTweets();
-
-  
-
   const [content, setContent] = useState("");
   const [imageURL, setImageURL] = useState("");
 
+  const { user } = useCurrentUser();
+  const { tweets = [] } = useGetAllTweets();
   const { mutate } = useCreateTweet();
 
   const handleInputChangeFile = useCallback((input: HTMLInputElement) => {
@@ -92,12 +86,13 @@ export default function Home() {
     input.click();
   }, [handleInputChangeFile]);
 
-
   const handleCreateTweet = useCallback(() => {
     mutate({
       content,
       imageURL,
     });
+    setContent("");
+    setImageURL("");
   }, [content, mutate,imageURL]);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -107,11 +102,8 @@ export default function Home() {
   };
 
   return (
-    // <div>
       <TwitterLayout>
         <div className="second  border border-gray-700 lg:w-2/5 w-5/6 h-screen overflow-y-scroll no-scrollbar">
-          {/* <PostTweet /> */}
-
           <div className="flex flex-row h-auto  transition-all cursor-pointer border border-b-1 border-t-1 border-r-0 border-l-0 border-gray-700 pb-3">
             <div className="userImage w-1/6 pl-2 lg:pl-4">
               <Image
@@ -135,7 +127,7 @@ export default function Home() {
                 }}
                 onInput={(e) => {
                   e.target.style.height = "auto"; // Reset the height
-                  e.target.style.height = `${e.target.scrollHeight}px`; // Set height to scrollHeight
+                  e.target.style.height = `${e.target.scrollHeight}px`;
                 }}
               />
             {
@@ -197,6 +189,5 @@ export default function Home() {
           )}
         </div>
       </TwitterLayout>
-    // </div>
   );
 }

@@ -1,29 +1,20 @@
 import { GraphqlContext } from "../../interfaces";
-import { prismaClient } from "../clients/db";
-// import { Tweet } from "./types";
 import { Tweet } from "@prisma/client";
+import UserService from "../services/user";
+import TweetService, { CreateTweetPayload } from "../services/tweet";
 
 const serviceAccount = require("../../../twitter-cb8e7-firebase-adminsdk-smhkw-1a6c1bd2b4.json");
-
 const firebaseAdmin = require("firebase-admin");
-const { v4: uuidv4 } = require("uuid");
 
 const admin = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
-  storageBucket: "twitter-cb8e7.appspot.com",
+  storageBucket: process.env.GCP_BUCKET_NAME,//NN
 });
 
-const storageRef = admin.storage().bucket(`gs://twitter-cb8e7.appspot.com`);
-
-
-interface CreateTweetPayload{
-    content: string;
-    imageURL?: string;
-}
+const storageRef = admin.storage().bucket(process.env.GCP_BUCKET_NAME);
 
 const queries = {
-  getAllTweets: () =>
-    prismaClient.tweet.findMany({ orderBy: { createdAt: "desc" } }),
+  getAllTweets: () => TweetService.getAllTweets(),
 
   getSignedURLForTweet: async (
     parent: any,
@@ -32,13 +23,15 @@ const queries = {
   ) => {
     if (!ctx.user || !ctx.user.id) throw new Error("Unauthenticated");
 
-    const allowedImageTypes = [
-      "image/jpg",
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ]
-    
+    // const allowedImageTypes = [
+    //   "image/jpg",
+    //   "image/jpeg",
+    //   "image/png",
+    //   "image/webp",
+    // ]
+
+    // if (!allowedImageTypes.includes(imageType)) throw new Error("Unsupported Image Format");
+
     // Upload the File
      const file = storageRef.file(
        `uploads/twitter/${imageName}-${Date.now()}.${imageType}`
@@ -63,15 +56,7 @@ const mutations = {
     ctx: GraphqlContext
   ) => {
     if (!ctx.user) throw new Error("You are not authenticated");
-
-    const tweet = await prismaClient.tweet.create({
-      data: {
-        content: payload.content,
-        imageURL: payload.imageURL,
-        author: { connect: { id: ctx.user.id } },
-      },
-    });
-
+    const tweet = await TweetService.createTweet({ ...payload, userId: ctx.user.id });
     return tweet;
   },
 };
@@ -80,7 +65,7 @@ const mutations = {
 const extraResolvers = {
   Tweet: {
     author: (parent: Tweet) =>
-      prismaClient.user.findUnique({ where: { id: parent.authorId } }),
+      UserService.getUserByID(parent.authorId),
   },
 };
 

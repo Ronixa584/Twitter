@@ -8,7 +8,6 @@ import { IoBookmarkOutline } from "react-icons/io5";
 import { LuUpload } from "react-icons/lu";
 import { Tweet } from '@/gql/graphql';
 import Link from "next/link";
-
 interface FeedCardProps {
   data: Tweet
 }
@@ -16,7 +15,6 @@ interface FeedCardProps {
 const FeedCard: React.FC<FeedCardProps> = (props) => {
 
   const { data } = props;
-// console.log(data);
 
     return (
       <div className="flex flex-row h-auto hover:bg-slate-950  transition-all cursor-pointer border border-b-1 border-t-1 border-r-0 border-l-0 border-gray-700 pb-3">

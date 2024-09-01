@@ -51,7 +51,6 @@ function initServer() {
                 };
             }),
         }));
-        //Created context so that we can use it anywhere in backend
         return app;
     });
 }

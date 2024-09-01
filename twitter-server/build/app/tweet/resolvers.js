@@ -8,28 +8,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolvers = void 0;
-const db_1 = require("../clients/db");
+const user_1 = __importDefault(require("../services/user"));
+const tweet_1 = __importDefault(require("../services/tweet"));
 const serviceAccount = require("../../../twitter-cb8e7-firebase-adminsdk-smhkw-1a6c1bd2b4.json");
 const firebaseAdmin = require("firebase-admin");
-const { v4: uuidv4 } = require("uuid");
 const admin = firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(serviceAccount),
-    storageBucket: "twitter-cb8e7.appspot.com",
+    storageBucket: process.env.GCP_BUCKET_NAME, //NN
 });
-const storageRef = admin.storage().bucket(`gs://twitter-cb8e7.appspot.com`);
+const storageRef = admin.storage().bucket(process.env.GCP_BUCKET_NAME);
 const queries = {
-    getAllTweets: () => db_1.prismaClient.tweet.findMany({ orderBy: { createdAt: "desc" } }),
+    getAllTweets: () => tweet_1.default.getAllTweets(),
     getSignedURLForTweet: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { imageType, imageName }, ctx) {
         if (!ctx.user || !ctx.user.id)
             throw new Error("Unauthenticated");
-        const allowedImageTypes = [
-            "image/jpg",
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-        ];
+        // const allowedImageTypes = [
+        //   "image/jpg",
+        //   "image/jpeg",
+        //   "image/png",
+        //   "image/webp",
+        // ]
+        // if (!allowedImageTypes.includes(imageType)) throw new Error("Unsupported Image Format");
         // Upload the File
         const file = storageRef.file(`uploads/twitter/${imageName}-${Date.now()}.${imageType}`);
         const [url] = yield file.getSignedUrl({
@@ -45,20 +49,14 @@ const mutations = {
     createTweet: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { payload }, ctx) {
         if (!ctx.user)
             throw new Error("You are not authenticated");
-        const tweet = yield db_1.prismaClient.tweet.create({
-            data: {
-                content: payload.content,
-                imageURL: payload.imageURL,
-                author: { connect: { id: ctx.user.id } },
-            },
-        });
+        const tweet = yield tweet_1.default.createTweet(Object.assign(Object.assign({}, payload), { userId: ctx.user.id }));
         return tweet;
     }),
 };
 //This resolver is used to get nested object named as author info
 const extraResolvers = {
     Tweet: {
-        author: (parent) => db_1.prismaClient.user.findUnique({ where: { id: parent.authorId } }),
+        author: (parent) => user_1.default.getUserByID(parent.authorId),
     },
 };
 exports.resolvers = { mutations, extraResolvers, queries };

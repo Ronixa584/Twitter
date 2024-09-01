@@ -8,13 +8,10 @@ import { IoPerson, IoSearchSharp } from "react-icons/io5";
 import { LuSquareSlash } from "react-icons/lu";
 import { RiNotification4Line } from "react-icons/ri";
 import Image from "next/image";
-// import { useCurrentUser } from "@/hooks/user";
 import { useCurrentUser } from "../../../hooks/user";
 import {
   CredentialResponse,
   GoogleLogin,
-  GoogleOAuthProvider,
-  useGoogleLogin,
 } from "@react-oauth/google";
 import { graphqlClient } from "@/clients/api";
 import { useCallback, useMemo } from "react";
@@ -35,8 +32,6 @@ interface TwitterSidebarButton {
 const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
-
-  // console.log(user);
 
   const listOfMenu: TwitterSidebarButton[] = useMemo(
     () => [
@@ -87,7 +82,8 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
       },
     ],
     [user?.id]
-  );
+  ); 
+
   //Function to get credential, send it to backend and get JWT token which can be used further.
   const handleLoginWithGoogle = useCallback(
     async (cred: CredentialResponse) => {
@@ -115,14 +111,9 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
 
   const logout = () => {
     window.localStorage.removeItem("TWITTER_TOKEN");
-
     toast.success(`Logged out Success`);
     window.location.href = "/";
   };
-
-  //     const login = useGoogleLogin({
-  //       onSuccess: handleLoginWithGoogle,
-  // });
 
   return (
     <div className="main flex h-screen w-screen lg:justify-center  flex-wrap  ">

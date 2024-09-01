@@ -8,7 +8,6 @@ import cors from 'cors';
 import { GraphqlContext } from "../interfaces";
 import JWTService from "./services/jwt";
 
-
 export async function initServer() {
   const app = express();
 
@@ -53,7 +52,6 @@ export async function initServer() {
       };
     },
   }));
-//Created context so that we can use it anywhere in backend
 
   return app;
 }
