@@ -2,7 +2,7 @@
   Twitter<br/>
 </h2>
 <div align="center"> 
-  <img alt="Demo" src="./Images/rsc.PNG" /> 
+  <img alt="Demo" src="./Images/Screenshot (97).png" /> 
 </div>
 
 <br/>
