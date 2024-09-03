@@ -52,5 +52,20 @@ class UserService {
             return db_1.prismaClient.user.findUnique({ where: { id } });
         });
     }
+    static followUser(from, to) {
+        if (from !== to) { //To avoid user following themselves
+            return db_1.prismaClient.follows.create({
+                data: {
+                    follower: { connect: { id: from } },
+                    following: { connect: { id: to } },
+                },
+            });
+        }
+    }
+    static unfollowUser(from, to) {
+        return db_1.prismaClient.follows.delete({
+            where: { followerId_followingId: { followerId: from, followingId: to } },
+        });
+    }
 }
 exports.default = UserService;

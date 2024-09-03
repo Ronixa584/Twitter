@@ -7,6 +7,7 @@ import { Tweet } from "./tweet/index";
 import cors from 'cors';
 import { GraphqlContext } from "../interfaces";
 import JWTService from "./services/jwt";
+import { mutations } from './tweet/mutations';
 
 export async function initServer() {
   const app = express();
@@ -26,6 +27,7 @@ export async function initServer() {
 
         type Mutation{
           ${Tweet.mutations}
+          ${User.mutations}
         }
 
       `,
@@ -36,6 +38,7 @@ export async function initServer() {
       },
       Mutation: {
         ...Tweet.resolvers.mutations,
+        ...User.resolvers.mutations,
       },
       ...Tweet.resolvers.extraResolvers,
       ...User.resolvers.extraResolvers,
