@@ -2,12 +2,16 @@
 
 import TwitterLayout from "../Componenet/Layout/TwitterLayout";
 import { IoArrowBackSharp } from "react-icons/io5";
-import { useGetUserInfo } from "../../hooks/user";
+import { useCurrentUser, useGetUserInfo } from "../../hooks/user";
 import Image from "next/image";
 import FeedCard from "../Componenet/FeedCard";
 import { Tweet, User } from "@/gql/graphql";
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useMemo, useCallback } from "react";
+import {useQueryClient} from "@tanstack/react-query"
+import { followUserMutation, unfollowUserMutation } from "@/graphql/mutation/user";
+import { graphqlClient } from "@/clients/api";
 
 interface ServerProps {
   user?: User;
@@ -17,7 +21,30 @@ const UserProfilePage: React.FC<ServerProps> = (props) => {
   const params = useParams();
   const id = params?.id as string;
   
+  const { user: currentUser } = useCurrentUser();
   const { userProfileInfo } = useGetUserInfo(id);
+  const queryClient = useQueryClient();
+
+  const amIFollowing = useMemo(() => {
+    if(!userProfileInfo) return false;
+    return (
+      (
+        currentUser?.following?.findIndex((e) => e?.id === userProfileInfo?.id) ?? -1
+      ) >= 0
+    );
+  }, [currentUser?.following, userProfileInfo]);
+
+  const handleFollowUser = useCallback(async () => {
+    if(!userProfileInfo?.id) return;
+    await graphqlClient.request(followUserMutation, {to: userProfileInfo?.id});
+    await queryClient.invalidateQueries(["CURRENT_USER"]);
+  }, [userProfileInfo?.id, queryClient]);
+
+  const handleUnFollowUser = useCallback(async () => {
+    if(!userProfileInfo?.id) return;
+    await graphqlClient.request(unfollowUserMutation, {to: userProfileInfo?.id});
+    await queryClient.invalidateQueries(["CURRENT_USER"]);
+  }, [userProfileInfo?.id, queryClient]);
 
   // console.log("USER Profile "+ userProfileInfo);
   // console.log("USER Profile " + JSON.stringify(userProfileInfo, null, 2));
@@ -62,12 +89,25 @@ const UserProfilePage: React.FC<ServerProps> = (props) => {
                   {userProfileInfo.firstName} {userProfileInfo.lastName}
                 </h2>
                 <h2 className="text-gray-400">@{userProfileInfo.email.split("@")[0]}</h2>
+                <div className="flex justify-between gap-2">
+                  <div>
+                    <h2 className="text-gray-400"><span className="text-gray-100">{userProfileInfo?.following?.length}</span> Following <span className="text-gray-100 ml-4">{userProfileInfo?.followers?.length}</span> Followers</h2>
+                  </div>
+                  { currentUser?.id !== userProfileInfo?.id &&(
+                    <>
+                    {
+                      amIFollowing ? (<button onClick={handleUnFollowUser}>UnFollow</button>) : (<button onClick={handleFollowUser}>Follow</button>)
+                    }
+                    </>
+                  )
+                  }
+                </div>
               </div>
             </div>
           )}
         </div>
 
-        <div className="tweets mt-40">
+        <div className="tweets mt-48">
           {userProfileInfo?.tweets?.map((tweet) => (
             <FeedCard data={tweet as Tweet} key={tweet?.id} />
           ))}
