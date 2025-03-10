@@ -11,6 +11,7 @@ type User{
     following: [User]
 
     tweets: [Tweet]
+    likes: [Like]
 }
 
 `;

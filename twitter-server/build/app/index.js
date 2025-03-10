@@ -19,6 +19,7 @@ const server_1 = require("@apollo/server");
 const express4_1 = require("@apollo/server/express4");
 const user_1 = require("./user");
 const index_1 = require("./tweet/index");
+const like_1 = require("./like");
 const cors_1 = __importDefault(require("cors"));
 const jwt_1 = __importDefault(require("./services/jwt"));
 function initServer() {
@@ -30,19 +31,22 @@ function initServer() {
             typeDefs: `
         ${user_1.User.types}
         ${index_1.Tweet.types}
+        ${like_1.Like.types}
 
         type Query{
           ${user_1.User.queries}
           ${index_1.Tweet.queries}
+          ${like_1.Like.queries}
         }
 
         type Mutation{
           ${index_1.Tweet.mutations}
           ${user_1.User.mutations}
+          ${like_1.Like.mutations}
         }
 
       `,
-            resolvers: Object.assign(Object.assign({ Query: Object.assign(Object.assign({}, user_1.User.resolvers.queries), index_1.Tweet.resolvers.queries), Mutation: Object.assign(Object.assign({}, index_1.Tweet.resolvers.mutations), user_1.User.resolvers.mutations) }, index_1.Tweet.resolvers.extraResolvers), user_1.User.resolvers.extraResolvers),
+            resolvers: Object.assign(Object.assign(Object.assign({ Query: Object.assign(Object.assign(Object.assign({}, user_1.User.resolvers.queries), index_1.Tweet.resolvers.queries), like_1.Like.resolvers.queries), Mutation: Object.assign(Object.assign(Object.assign({}, index_1.Tweet.resolvers.mutations), user_1.User.resolvers.mutations), like_1.Like.resolvers.mutations) }, index_1.Tweet.resolvers.extraResolvers), user_1.User.resolvers.extraResolvers), like_1.Like.resolvers.extraResolvers),
         });
         yield graphqlServer.start();
         app.use("/graphql", (0, express4_1.expressMiddleware)(graphqlServer, {

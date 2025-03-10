@@ -7,7 +7,8 @@ export interface CreateTweetPayload {
 }
 
 class TweetService {
-    public static createTweet(data: CreateTweetPayload) {
+  public static createTweet(data: CreateTweetPayload) {
+    console.log("This is tweet"+ data.content);
         return prismaClient.tweet.create({
           data: {
             content: data.content,
@@ -19,6 +20,12 @@ class TweetService {
 
     public static getAllTweets() {
         return prismaClient.tweet.findMany({ orderBy: { createdAt: "desc" } });
+  }
+  
+    public static getTweetByID(tweetId: string){
+        return prismaClient.tweet.findUnique({
+          where: {id: tweetId},
+        })
     }
 
 }

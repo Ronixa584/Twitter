@@ -4,10 +4,10 @@ import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { User } from "./user";
 import { Tweet } from "./tweet/index";
+import {  Like } from "./like"
 import cors from 'cors';
 import { GraphqlContext } from "../interfaces";
 import JWTService from "./services/jwt";
-import { mutations } from './tweet/mutations';
 
 export async function initServer() {
   const app = express();
@@ -19,15 +19,18 @@ export async function initServer() {
     typeDefs: `
         ${User.types}
         ${Tweet.types}
+        ${Like.types}
 
         type Query{
           ${User.queries}
           ${Tweet.queries}
+          ${Like.queries}
         }
 
         type Mutation{
           ${Tweet.mutations}
           ${User.mutations}
+          ${Like.mutations}
         }
 
       `,
@@ -35,13 +38,16 @@ export async function initServer() {
       Query: {
             ...User.resolvers.queries,
             ...Tweet.resolvers.queries,
+            ...Like.resolvers.queries,
       },
       Mutation: {
         ...Tweet.resolvers.mutations,
         ...User.resolvers.mutations,
+        ...Like.resolvers.mutations,
       },
       ...Tweet.resolvers.extraResolvers,
       ...User.resolvers.extraResolvers,
+      ...Like.resolvers.extraResolvers,
     },
   });
 

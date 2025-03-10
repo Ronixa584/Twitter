@@ -14,6 +14,8 @@ exports.types = `#graphql
         imageURL: String
 
         author: User
+
+        likes: [Like]
     }
     
 `;
