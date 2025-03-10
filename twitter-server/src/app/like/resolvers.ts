@@ -20,12 +20,18 @@ const mutations = {
   ) => {
     if (!ctx.user) throw new Error("You are not authenticated");
     // console.log(ctx.user.id + " " + input);
-    const like = await LikeService.likeTweet({
-      ...input,
-      userId: ctx.user.id,
-    });
 
-    return like;
+    const likeStatus = await LikeService.hasUserLikedTweet({ ...input }); //overengineering, we can handle it on frontend
+    if (likeStatus == true) {
+      throw new Error("You have already liked this tweet");
+    } else {
+      const like = await LikeService.likeTweet({
+        ...input,
+        userId: ctx.user.id,
+      });
+
+      return like;
+    }
   },
 
   unlikeTweet: async (

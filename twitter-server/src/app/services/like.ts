@@ -40,12 +40,12 @@ class LikeService {
   }
 
   // Check if a user has liked a tweet
-  public static async hasUserLikedTweet(userId: string, tweetId: string) {
+  public static async hasUserLikedTweet(data: LikeTweetPayload) {
     const like = await prismaClient.like.findUnique({
       where: {
         userId_tweetId: {
-          userId,
-          tweetId,
+          userId: data.userId,
+          tweetId: data.tweetId,
         },
       },
     });

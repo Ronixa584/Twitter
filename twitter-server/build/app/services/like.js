@@ -42,13 +42,13 @@ class LikeService {
         });
     }
     // Check if a user has liked a tweet
-    static hasUserLikedTweet(userId, tweetId) {
+    static hasUserLikedTweet(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const like = yield db_1.prismaClient.like.findUnique({
                 where: {
                     userId_tweetId: {
-                        userId,
-                        tweetId,
+                        userId: data.userId,
+                        tweetId: data.tweetId,
                     },
                 },
             });

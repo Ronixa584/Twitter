@@ -1,3 +1,13 @@
 node_modules
 # Keep environment variables out of version control
 .env
+
+# Ignore Supabase and VSCode folders
+/supabase
+/.vscode
+
+# Ignore Firebase admin SDK JSON file
+/twitter-cb8e7-firebase-adminsdk-smhkw-1a6c1bd2b4.json
+
+# Ignore personal readme file
+./Its readme for me.txt

@@ -26,8 +26,14 @@ const mutations = {
         if (!ctx.user)
             throw new Error("You are not authenticated");
         // console.log(ctx.user.id + " " + input);
-        const like = yield like_1.default.likeTweet(Object.assign(Object.assign({}, input), { userId: ctx.user.id }));
-        return like;
+        const likeStatus = yield like_1.default.hasUserLikedTweet(Object.assign({}, input)); //overengineering, we can handle it on frontend
+        if (likeStatus == true) {
+            throw new Error("You have already liked this tweet");
+        }
+        else {
+            const like = yield like_1.default.likeTweet(Object.assign(Object.assign({}, input), { userId: ctx.user.id }));
+            return like;
+        }
     }),
     unlikeTweet: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { input }, ctx) {
         if (!ctx.user)
