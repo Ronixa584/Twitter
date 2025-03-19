@@ -20,15 +20,22 @@ const queries = {
     getAllLikesForTweet: (parent_1, _a) => __awaiter(void 0, [parent_1, _a], void 0, function* (parent, { input }) {
         return yield like_1.default.getAllLikesForTweet(Object.assign({}, input));
     }),
+    hasUserLikedTweet: (parent_1, _a) => __awaiter(void 0, [parent_1, _a], void 0, function* (parent, { input }) {
+        return yield like_1.default.hasUserLikedTweet(Object.assign({}, input));
+    }),
+    getLikeCountForTweet: (parent_1, _a) => __awaiter(void 0, [parent_1, _a], void 0, function* (parent, { input }) {
+        return yield like_1.default.getLikeCountForTweet(Object.assign({}, input));
+    })
 };
 const mutations = {
     likeTweet: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { input }, ctx) {
         if (!ctx.user)
             throw new Error("You are not authenticated");
         // console.log(ctx.user.id + " " + input);
-        const likeStatus = yield like_1.default.hasUserLikedTweet(Object.assign({}, input)); //overengineering, we can handle it on frontend
+        const likeStatus = yield like_1.default.hasUserLikedTweet(Object.assign({}, input));
         if (likeStatus == true) {
-            throw new Error("You have already liked this tweet");
+            return null;
+            // throw new Error("You have already liked this tweet");
         }
         else {
             const like = yield like_1.default.likeTweet(Object.assign(Object.assign({}, input), { userId: ctx.user.id }));

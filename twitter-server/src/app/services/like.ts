@@ -52,6 +52,18 @@ class LikeService {
 
     return !!like; // Returns true if the like exists, otherwise false
   }
+
+  // Get the count of likes for a tweet
+  public static async getLikeCountForTweet(data: LikeTweetPayload) {
+    const tweetId = data.tweetId;
+    console.log(tweetId);
+
+    const likeCount = await prismaClient.like.count({
+      where: { tweetId },
+    });
+
+    return likeCount;
+  }
 }
 
 export default LikeService;

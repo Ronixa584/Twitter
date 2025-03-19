@@ -55,5 +55,16 @@ class LikeService {
             return !!like; // Returns true if the like exists, otherwise false
         });
     }
+    // Get the count of likes for a tweet
+    static getLikeCountForTweet(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const tweetId = data.tweetId;
+            console.log(tweetId);
+            const likeCount = yield db_1.prismaClient.like.count({
+                where: { tweetId },
+            });
+            return likeCount;
+        });
+    }
 }
 exports.default = LikeService;

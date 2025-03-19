@@ -4,12 +4,24 @@ import UserService from "../services/user";
 import TweetService from "../services/tweet";
 
 const queries = {
-  getAllLikesForTweet: async(
+  getAllLikesForTweet: async (
     parent: any,
     { input }: { input: LikeTweetPayload }
   ) => {
-    return await LikeService.getAllLikesForTweet({...input});
+    return await LikeService.getAllLikesForTweet({ ...input });
   },
+  hasUserLikedTweet: async (
+    parent: any,
+    { input }: { input: LikeTweetPayload }
+  ) => {
+    return await LikeService.hasUserLikedTweet({ ...input });
+  },
+  getLikeCountForTweet: async (
+    parent: any,
+    {input} : {input: LikeTweetPayload}
+  ) => {
+    return await LikeService.getLikeCountForTweet({ ...input });
+  }
 };
 
 const mutations = {
@@ -21,9 +33,10 @@ const mutations = {
     if (!ctx.user) throw new Error("You are not authenticated");
     // console.log(ctx.user.id + " " + input);
 
-    const likeStatus = await LikeService.hasUserLikedTweet({ ...input }); //overengineering, we can handle it on frontend
+    const likeStatus = await LikeService.hasUserLikedTweet({ ...input });
     if (likeStatus == true) {
-      throw new Error("You have already liked this tweet");
+      return null;
+      // throw new Error("You have already liked this tweet");
     } else {
       const like = await LikeService.likeTweet({
         ...input,
