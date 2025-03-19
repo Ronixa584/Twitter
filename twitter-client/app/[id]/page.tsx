@@ -37,13 +37,19 @@ const UserProfilePage: React.FC<ServerProps> = (props) => {
   const handleFollowUser = useCallback(async () => {
     if(!userProfileInfo?.id) return;
     await graphqlClient.request(followUserMutation, {to: userProfileInfo?.id});
-    await queryClient.invalidateQueries(["CURRENT_USER"]);
+    // await queryClient.invalidateQueries(["CURRENT_USER"]);
+          await queryClient.invalidateQueries({
+            queryKey: ["CURRENT_USER"],
+          });
   }, [userProfileInfo?.id, queryClient]);
 
   const handleUnFollowUser = useCallback(async () => {
     if(!userProfileInfo?.id) return;
     await graphqlClient.request(unfollowUserMutation, {to: userProfileInfo?.id});
-    await queryClient.invalidateQueries(["CURRENT_USER"]);
+    // await queryClient.invalidateQueries(["CURRENT_USER"]);
+          await queryClient.invalidateQueries({
+        queryKey: ["CURRENT_USER"],
+      });
   }, [userProfileInfo?.id, queryClient]);
 
   // console.log("USER Profile "+ userProfileInfo);
@@ -51,7 +57,7 @@ const UserProfilePage: React.FC<ServerProps> = (props) => {
 
   return (
     <TwitterLayout>
-      <div className="second  border border-gray-700 lg:w-2/5 w-5/6 h-screen overflow-y-scroll no-scrollbar">
+      <div className="second  border border-gray-700 h-screen overflow-y-scroll no-scrollbar">
         <div className="navigationBar flex border border-gray-700">
           <Link href="/">
           <div className="nav p-4">

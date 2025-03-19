@@ -60,7 +60,9 @@ export default function Home() {
             },
           });
         } catch (error) {
-          console.log(error.response?.data);
+          console.log(
+            (error as { response: { data: unknown } })?.response?.data
+          );
         }
 
         toast.success("Upload Completed", { id: "2" });
@@ -102,92 +104,98 @@ export default function Home() {
   };
 
   return (
-      <TwitterLayout>
-        <div className="second  border border-gray-700 lg:w-2/5 w-5/6 h-screen overflow-y-scroll no-scrollbar">
-          <div className="flex flex-row h-auto  transition-all cursor-pointer border border-b-1 border-t-1 border-r-0 border-l-0 border-gray-700 pb-3">
-            <div className="userImage w-1/6 pl-2 lg:pl-4">
+    <TwitterLayout>
+      <div className="">
+        <div className="flex flex-row h-auto  transition-all cursor-pointer border border-b-1 border-t-1 border-r-0 border-l-0 border-gray-700 pb-3">
+          <div className="userImage w-1/6 pl-2 lg:pl-4">
+            <Image
+              src={user?.profileImageURL || ""} // A fallback image
+              alt="User Image"
+              height={40}
+              width={50}
+              className="rounded-full  mt-2 lg:mt-4 m-auto"
+            />
+          </div>
+          <div className="Message w-full pt-4 lg:pt-6 pl-2 mr-5">
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="What is happening?!"
+              className="userMessage w-full text-sm md:text-base lg:text-xl text-gray-500 bg-transparent mr-5"
+              style={{
+                overflowY: "auto",
+                resize: "none",
+                maxHeight: "calc(100vh - 100px)",
+              }}
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = "auto"; // Reset the height
+                target.style.height = `${target.scrollHeight}px`;
+              }}
+            />
+            {imageURL && (
               <Image
-                src={user?.profileImageURL}
-                alt="User Image"
-                height={40}
-                width={50}
-                className="rounded-full  mt-2 lg:mt-4 m-auto"
+                src={imageURL}
+                alt="tweet-image"
+                width={300}
+                height={300}
               />
-            </div>
-            <div className="Message w-full pt-4 lg:pt-6 pl-2 mr-5">
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="What is happening?!"
-                className="userMessage w-full text-sm md:text-base lg:text-xl text-gray-500 bg-transparent mr-5"
-                style={{
-                  overflowY: "auto",
-                  resize: "none",
-                  maxHeight: "calc(100vh - 100px)",
-                }}
-                onInput={(e) => {
-                  e.target.style.height = "auto"; // Reset the height
-                  e.target.style.height = `${e.target.scrollHeight}px`;
-                }}
-              />
-            {
-              imageURL && <Image src={imageURL} alt="tweet-image" width={300} height={300} />
-            }
+            )}
 
-              <div className="Icons flex justify-between mt-2  lg:mt-4">
-                <div className="flex justify-start ">
-                  <div
-                    onClick={handleSelectImage}
-                    className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3"
-                  >
-                    <GoFileMedia />
-                  </div>
-                  <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
-                    <HiMiniGif className="" />
-                  </div>
-                  <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
-                    <FaSquarePollHorizontal />
-                  </div>
-                  <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
-                    <BsEmojiSmile
-                      onClick={() =>
-                        setShowEmojiPicker((prevState) => !prevState)
-                      }
-                      className=""
-                    />
-                  </div>
-                  <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3 hidden lg:block">
-                    <RiCalendarScheduleLine className="" />
-                  </div>
-                  <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3 hidden lg:block">
-                    <TfiLocationPin className="" />
-                  </div>
+            <div className="Icons flex justify-between mt-2  lg:mt-4">
+              <div className="flex justify-start ">
+                <div
+                  onClick={handleSelectImage}
+                  className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3"
+                >
+                  <GoFileMedia />
                 </div>
-                <div className="">
-                  <button
-                    onClick={() => {
-                      if (content.trim() !== "") {
-                        handleCreateTweet();
-                      }
-                    }}
-                    className="tweetButton bg-[#1d9bf0] font-semibold py-2 px-5 rounded-full "
-                  >
-                    Tweet
-                  </button>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
+                  <HiMiniGif className="" />
                 </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
+                  <FaSquarePollHorizontal />
+                </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3">
+                  <BsEmojiSmile
+                    onClick={() =>
+                      setShowEmojiPicker((prevState) => !prevState)
+                    }
+                    className=""
+                  />
+                </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3 hidden lg:block">
+                  <RiCalendarScheduleLine className="" />
+                </div>
+                <div className="text-[#1d9bf0] hover:bg-gray-800 rounded-full p-3 hidden lg:block">
+                  <TfiLocationPin className="" />
+                </div>
+              </div>
+              <div className="">
+                <button
+                  onClick={() => {
+                    if (content.trim() !== "") {
+                      handleCreateTweet();
+                    }
+                  }}
+                  className="tweetButton bg-[#1d9bf0] font-semibold py-2 px-5 rounded-full "
+                >
+                  Tweet
+                </button>
               </div>
             </div>
           </div>
-          {showEmojiPicker && (
-            <div className="emoji-picker z-10">
-              <EmojiPicker onEmojiClick={onEmojiClick} />
-            </div>
-          )}
-
-          {tweets?.map((tweet) =>
-            tweet ? <FeedCard key={tweet?.id} data={tweet as Tweet} /> : null
-          )}
         </div>
-      </TwitterLayout>
+        {showEmojiPicker && (
+          <div className="emoji-picker z-10">
+            <EmojiPicker onEmojiClick={onEmojiClick} />
+          </div>
+        )}
+
+        {tweets?.map((tweet) =>
+          tweet ? <FeedCard key={tweet?.id} data={tweet as Tweet} /> : null
+        )}
+      </div>
+    </TwitterLayout>
   );
 }

@@ -18,6 +18,7 @@ import { useCallback, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 import Link from "next/link";
+import SignInFallback from "../Fallback";
 
 interface TwitterLayoutProps {
   children: React.ReactNode;
@@ -104,7 +105,11 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
         window.localStorage.setItem("TWITTER_TOKEN", verifyGoogleToken);
       }
 
-      await queryClient.invalidateQueries(["CURRENT_USER"]);
+      // await queryClient.invalidateQueries(["CURRENT_USER"]);
+      await queryClient.invalidateQueries({
+        queryKey: ["CURRENT_USER"],
+      });
+
     },
     [queryClient]
   );
@@ -119,6 +124,7 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
     <div className="main flex h-screen w-screen lg:justify-center  flex-wrap  ">
       <Toaster />
 
+      {/* First Section */}
       <div className="first w-1/6 lg:1/4 overflow-y-scroll no-scrollbar lg:overflow-auto flex flex-col items-center justify-between">
         <div className="flex flex-col m-1">
           <div className="menu flex justify-center items-center  md:justify-normal md:items-start md:p-1  lg:justify-normal lg:items-start flex-col  lg:p-1">
@@ -173,8 +179,16 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
         )}
       </div>
 
-      {props.children}
+      {/* Second Section */}
+      {user && user.profileImageURL ? (
+        <div className="second  border border-gray-700 lg:w-2/5 w-5/6 h-screen overflow-y-scroll no-scrollbar">{props.children}</div>
+      ) : (
+        <div className="second  border border-gray-700 lg:w-2/5 w-5/6 h-screen overflow-y-scroll no-scrollbar">
+          <SignInFallback/>
+        </div>
+      )}
 
+      {/* Third Section */}
       <div className="third w-1/4 hidden lg:block">
         {!user ? (
           <div className="mt-5 ml-8 p-4 border border-gray-700 rounded-xl">

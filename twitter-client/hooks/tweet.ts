@@ -15,7 +15,10 @@ export const useCreateTweet = () => {
       graphqlClient.request(createTweetMutation, { payload }),
       onMutate: (payload) => toast.loading("Creating Tweet", {id: "1"}),  
     onSuccess: async (paylaod) => {
-      await queryClient.invalidateQueries(["all-tweets"]);
+      // await queryClient.invalidateQueries(["all-tweets"]);
+      await queryClient.invalidateQueries({
+        queryKey: ["all-tweets"],
+      });
       toast.success("Creating Tweet", { id: "1" });
     },
   });

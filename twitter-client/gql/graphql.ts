@@ -21,11 +21,26 @@ export type CreateTweetData = {
   imageURL?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type Like = {
+  __typename?: 'Like';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  tweet: Tweet;
+  user: User;
+};
+
+export type LikeTweetInput = {
+  tweetId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createTweet?: Maybe<Tweet>;
   followUser?: Maybe<Scalars['Boolean']['output']>;
+  likeTweet?: Maybe<Like>;
   unfollowUser?: Maybe<Scalars['Boolean']['output']>;
+  unlikeTweet: Scalars['Boolean']['output'];
 };
 
 
@@ -39,17 +54,40 @@ export type MutationFollowUserArgs = {
 };
 
 
+export type MutationLikeTweetArgs = {
+  input: LikeTweetInput;
+};
+
+
 export type MutationUnfollowUserArgs = {
   to: Scalars['ID']['input'];
 };
 
+
+export type MutationUnlikeTweetArgs = {
+  input: LikeTweetInput;
+};
+
 export type Query = {
   __typename?: 'Query';
+  getAllLikesForTweet?: Maybe<Array<Maybe<Like>>>;
   getAllTweets?: Maybe<Array<Maybe<Tweet>>>;
   getCurrentUser?: Maybe<User>;
+  getLikeCountForTweet: Scalars['Int']['output'];
   getSignedURLForTweet?: Maybe<Scalars['String']['output']>;
   getUserById?: Maybe<User>;
+  hasUserLikedTweet: Scalars['Boolean']['output'];
   verifyGoogleToken: Scalars['String']['output'];
+};
+
+
+export type QueryGetAllLikesForTweetArgs = {
+  input: LikeTweetInput;
+};
+
+
+export type QueryGetLikeCountForTweetArgs = {
+  input: LikeTweetInput;
 };
 
 
@@ -64,6 +102,11 @@ export type QueryGetUserByIdArgs = {
 };
 
 
+export type QueryHasUserLikedTweetArgs = {
+  input: LikeTweetInput;
+};
+
+
 export type QueryVerifyGoogleTokenArgs = {
   token: Scalars['String']['input'];
 };
@@ -74,6 +117,7 @@ export type Tweet = {
   content: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   imageURL?: Maybe<Scalars['String']['output']>;
+  likes?: Maybe<Array<Maybe<Like>>>;
 };
 
 export type User = {
@@ -84,9 +128,24 @@ export type User = {
   following?: Maybe<Array<Maybe<User>>>;
   id: Scalars['ID']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
+  likes?: Maybe<Array<Maybe<Like>>>;
   profileImageURL?: Maybe<Scalars['String']['output']>;
   tweets?: Maybe<Array<Maybe<Tweet>>>;
 };
+
+export type LikeTweetMutationVariables = Exact<{
+  input: LikeTweetInput;
+}>;
+
+
+export type LikeTweetMutation = { __typename?: 'Mutation', likeTweet?: { __typename?: 'Like', id: string } | null };
+
+export type UnlikeTweetMutationVariables = Exact<{
+  input: LikeTweetInput;
+}>;
+
+
+export type UnlikeTweetMutation = { __typename?: 'Mutation', unlikeTweet: boolean };
 
 export type CreateTweetMutationVariables = Exact<{
   payload: CreateTweetData;
@@ -108,6 +167,20 @@ export type UnfollowUserMutationVariables = Exact<{
 
 
 export type UnfollowUserMutation = { __typename?: 'Mutation', unfollowUser?: boolean | null };
+
+export type QueryQueryVariables = Exact<{
+  input: LikeTweetInput;
+}>;
+
+
+export type QueryQuery = { __typename?: 'Query', hasUserLikedTweet: boolean };
+
+export type GetLikeCountForTweetQueryVariables = Exact<{
+  input: LikeTweetInput;
+}>;
+
+
+export type GetLikeCountForTweetQuery = { __typename?: 'Query', getLikeCountForTweet: number };
 
 export type GetAllTweetsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -142,9 +215,13 @@ export type GetUserByIdQueryVariables = Exact<{
 export type GetUserByIdQuery = { __typename?: 'Query', getUserById?: { __typename?: 'User', id: string, firstName: string, lastName?: string | null, email: string, profileImageURL?: string | null, followers?: Array<{ __typename?: 'User', id: string, firstName: string, lastName?: string | null, profileImageURL?: string | null } | null> | null, following?: Array<{ __typename?: 'User', id: string, firstName: string, lastName?: string | null, profileImageURL?: string | null } | null> | null, tweets?: Array<{ __typename?: 'Tweet', id: string, content: string, imageURL?: string | null, author?: { __typename?: 'User', id: string, firstName: string, lastName?: string | null, profileImageURL?: string | null } | null } | null> | null } | null };
 
 
+export const LikeTweetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LikeTweet"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LikeTweetInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"likeTweet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<LikeTweetMutation, LikeTweetMutationVariables>;
+export const UnlikeTweetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnlikeTweet"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LikeTweetInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unlikeTweet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<UnlikeTweetMutation, UnlikeTweetMutationVariables>;
 export const CreateTweetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTweet"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"payload"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateTweetData"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTweet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"payload"},"value":{"kind":"Variable","name":{"kind":"Name","value":"payload"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateTweetMutation, CreateTweetMutationVariables>;
 export const FollowUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FollowUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"to"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"followUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"to"}}}]}]}}]} as unknown as DocumentNode<FollowUserMutation, FollowUserMutationVariables>;
 export const UnfollowUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnfollowUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"to"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unfollowUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"to"}}}]}]}}]} as unknown as DocumentNode<UnfollowUserMutation, UnfollowUserMutationVariables>;
+export const QueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Query"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LikeTweetInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasUserLikedTweet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<QueryQuery, QueryQueryVariables>;
+export const GetLikeCountForTweetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLikeCountForTweet"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LikeTweetInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getLikeCountForTweet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<GetLikeCountForTweetQuery, GetLikeCountForTweetQueryVariables>;
 export const GetAllTweetsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllTweets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllTweets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"imageURL"}},{"kind":"Field","name":{"kind":"Name","value":"author"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profileImageURL"}}]}}]}}]}}]} as unknown as DocumentNode<GetAllTweetsQuery, GetAllTweetsQueryVariables>;
 export const GetSignedUrlDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSignedURL"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSignedURLForTweet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"imageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}}},{"kind":"Argument","name":{"kind":"Name","value":"imageType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageType"}}}]}]}}]} as unknown as DocumentNode<GetSignedUrlQuery, GetSignedUrlQueryVariables>;
 export const VerifyUserGoogleTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"verifyUserGoogleToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyGoogleToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<VerifyUserGoogleTokenQuery, VerifyUserGoogleTokenQueryVariables>;
